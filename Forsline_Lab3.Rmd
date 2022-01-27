@@ -300,10 +300,13 @@ Approximately `r twelfth_percent`% of the cells contain the 12th vegetation clas
   - target thresholds can also be evaluated using policy or standard practices such as setting targets based on species geographic range size 
 
 ## Feature abundance
+
 - calculate how much of each vegetation feature occurs inside each planning unit 
   - this is the **abundance of the features**
-- use  `problem()`  to create an empty conservation planning problem that only contains the planning unit and biodiversity data
+- use  `problem()`  to create an empty conservation planning problem `p0` that only contains the planning unit and biodiversity data
+  - this assigns a cost value for each planning unit 
 - use `feature_abundances()` to calculate the total amount of each feature in each planning unit
+  - this outputs a tibble, not a dataframe
 
 ```{r}
 # create prioritizr problem with only the PU data + vegetation data 
@@ -320,19 +323,14 @@ abundance_data <- feature_abundances(p0)
 print(abundance_data)
 ```
 
-\clearpage
 
-```{r}
-# note that only the first ten rows are printed,
-# this is because the abundance_data object is a tibble (i.e. tbl_df) object
-# and not a standard data.frame object
-print(class(abundance_data))
+The `abundance_data` object contains three columns
+- The `feature` column contains the name of each feature (derived from `names(veg_data)`)
+- the `absolute_abundance` column contains the total amount of each feature in all the planning units
+- and the `relative_abundance` column contains the total amount of each feature in the planning units expressed as a proportion of the total amount in the underlying raster data. 
+  - since all the raster cells containing vegetation overlap with the planning units, all of the values in the `relative_abundance` column are equal to one (meaning 100%). 
 
-# we can print all of the rows in abundance_data like this
-print(abundance_data, n = Inf)
-```
-
-The `abundance_data` object contains three columns. The `feature` column contains the name of each feature (derived from `names(veg_data)`), the `absolute_abundance` column contains the total amount of each feature in all the planning units, and the `relative_abundance` column contains the total amount of each feature in the planning units expressed as a proportion of the total amount in the underlying raster data. Since all the raster cells containing vegetation overlap with the planning units, all of the values in the `relative_abundance` column are equal to one (meaning 100%). Now let's add a new column with the feature abundances expressed in area units (i.e. km^2^).
+Add a new column with the feature abundances expressed in area units (i.e. km^2^).
 
 ```{r}
 # add new column with feature abundances in km^2
@@ -363,16 +361,42 @@ abundance_data$feature[which.max(abundance_data$absolute_abundance_km2)]
 
 Now, try to answer the following questions.
 
-```{block2, type="rmdquestion"}
 1. What is the median abundance of the features (hint: `median`)?
+
+```{r}
+median <- median(abundance_data$absolute_abundance_km2)
+```
+
+The median abundance of the features is `r median` km^2^. 
+
 2. What is the name of the feature with smallest abundance?
+
+```{r}
+small <- abundance_data$feature[which.min(abundance_data$absolute_abundance_km2)]
+```
+
+The name of the feature with the smallest abundance is `r small`. 
+
 3. How many features have a total abundance greater than 100 km^2 (hint: use `sum(abundance_data$absolute_abundance_km2 > set_units(threshold, km^2)` with the correct `threshold` value)?
+
+```{r}
+threshold = 100
+
+total_abundance <- sum(abundance_data$absolute_abundance_km2 > set_units(threshold, km^2))
 
 ```
 
+There are `r total_abundance` features with a total abundance greater than 100 km^2^. 
+
+
 ## Feature representation
 
-After calculating the total amount of each feature in the planning units (i.e. the features' abundances), we will now calculate the amount of each feature in the planning units that are covered by protected areas (i.e. feature representation by protected areas). We can complete this task using the `eval_feature_representation_summary()` function. This function requires (i) a conservation problem object with the planning unit and biodiversity data and also (ii) an object representing a solution to the problem (i.e an object in the same format as the planning unit data with values indicating if the planning units are selected or not).
+- calculate the amount of each feature in the planning units that are covered by protected areas (i.e. feature representation by protected areas)
+- use `eval_feature_representation_summary()`, which requires: 
+  - (i) a conservation problem object with the planning unit and biodiversity data
+  - (ii) an object representing a solution to the problem (i.e an object in the same format as the planning unit data with values indicating if the planning units are selected or not)
+    - 1 = PU is covered by a protected area 
+    - 0 = PU is not covered by a protected area 
 
 ```{r}
 # create column in planning unit data with binary values (zeros and ones)
@@ -386,7 +410,13 @@ repr_data <- eval_feature_representation_summary(p0, pu_data[, "pa_status"])
 print(repr_data)
 ```
 
-Similar to the abundance data before, the `repr_data` object contains three columns. The `feature` column contains the name of each feature, the `absolute_held` column shows the total amount of each feature held in the solution (i.e. the planning units covered by protected areas), and the `relative_held` column shows the proportion of each feature held in the solution (i.e. the proportion of each feature's spatial distribution held in protected areas). Since the `absolute_held` values correspond to the number of grid cells in the `veg_data` object with overlap with protected areas, let's convert them to area units (i.e. km^2^) so we can report them.
+The `repr_data` object contains three columns
+- The `feature` column contains the name of each feature
+- the `absolute_held` column shows the total amount of each feature held in the solution (i.e. the planning units covered by protected areas)
+- and the `relative_held` column shows the proportion of each feature held in the solution (i.e. the proportion of each feature's spatial distribution held in protected areas). 
+
+- the `absolute_held` values correspond to the number of grid cells in the `veg_data` object with overlap with protected areas
+- convert them to area units (i.e. km^2^) so we can report them.
 
 ```{r}
 # add new column with the areas represented in km^2
@@ -399,17 +429,43 @@ repr_data$absolute_held_km2 <-
 print(repr_data)
 ```
 
-\clearpage
 
 Now let's investigate how well the species are represented.
 
-```{block2, type="rmdquestion"}
 1. What is the average proportion of the features held in protected areas (hint: use `mean(table$relative_held)` with the correct `table` name)?
+
+```{r}
+mean <- mean(repr_data$relative_held)
+perc <- round(mean * 100, digits = 2)
+```
+
+On average, `r perc`% of features are held in protected areas 
+
 2. If we set a target of 10% coverage by protected areas, how many features fail to meet this target (hint: use `sum(table$relative_held >= target_value)`  with the correct `table` name)?
+
+```{r}
+target_value = .10
+sum <- sum(repr_data$relative_held >= target_value)
+```
+
+With a target of 10% coverage by protected areas, `r sum` features do not meet this target threshold. 
+
 3. If we set a target of 20% coverage by protected areas, how many features fail to meet this target?
+
+```{r}
+target_value = .20
+sum <- sum(repr_data$relative_held >= target_value)
+```
+
+With a target of 20% coverage by protected areas, `r sum` features do not meet this target threshold. 
+
 4. Is there a relationship between the total abundance of a feature and how well it is represented by protected areas (hint: `plot(abundance_data$absolute_abundance ~ repr_data$relative_held)`)?
 
+```{r}
+plot(abundance_data$absolute_abundance ~ repr_data$relative_held)
 ```
+
+It seems like features that are more abundant typically are less represented by protected areas. This is what we might expect since protected areas usually prioritize rare or endangered species. Species with high total abundance values likely will not need to be protected. 
 
 # Spatial prioritizations
 
