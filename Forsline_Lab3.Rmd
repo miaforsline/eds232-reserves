@@ -281,7 +281,7 @@ twelfth_percent <- round(twelfth_proportion * 100, digits = 2)
 
 Approximately `r twelfth_percent`% of the cells contain the 12th vegetation class. 
 
-3. Which vegetation class is the most abundant (i.e. present in the greatest number of cells)?
+# 3. Which vegetation class is the most abundant (i.e. present in the greatest number of cells)?
 
 
 
@@ -292,14 +292,21 @@ Approximately `r twelfth_percent`% of the cells contain the 12th vegetation clas
 
 ## Introduction
 
-Before we begin to prioritize areas for protected area establishment, we should first understand how well existing protected areas are conserving our biodiversity features (i.e. native vegetation classes in Tasmania, Australia). This step is critical: we cannot develop plans to improve conservation of biodiversity if we don't understand how well existing policies are currently conserving biodiversity! To achieve this, we can perform a "gap analysis". A gap analysis involves calculating how well each of our biodiversity features (i.e. vegetation classes in this exercise) are represented (covered) by protected areas. Next, we compare current representation by protected areas of each feature (e.g. 5% of their spatial distribution covered by protected areas) to a target threshold (e.g. 20% of their spatial distribution covered by protected areas). This target threshold denotes the minimum amount (e.g. minimum proportion of spatial distribution) that we need of each feature to be represented in the protected area system. Ideally, targets should be based on an estimate of how much area or habitat is needed for ecosystem function or species persistence. In practice, targets are generally set using simple rules of thumb (e.g. 10% or 20%), policy (17%; https://www.cbd.int/sp/targets/rationale/target-11) or standard practices (e.g. setting targets for species based on geographic range size) [@r1; @r2].
+- We need to understand how existing protected areas conserve native vegetation in Tasmania, Australia before we can prioritize areas for establishing protected areas
+- To do so, we will perform a "gap analysis" to assess how each biodiversity feature is represented by existing protected areas
+- Then we can compare the current representation to a target threshold of how much we want each feature represented
+  - target thresholds should be appropriate for how much area/habitat each species needs for ecosystem function and/or survival 
+  - common values include 10% or 20% 
+  - target thresholds can also be evaluated using policy or standard practices such as setting targets based on species geographic range size 
 
 ## Feature abundance
-
-Now we will perform some preliminary calculations to explore the data. First, we will calculate how much of each vegetation feature occurs inside each planning unit (i.e. the abundance of the features). To achieve this, we will use the `problem` function to create an empty conservation planning problem that only contains the planning unit and biodiversity data. We will then use the `feature_abundances` function to calculate the total amount of each feature in each planning unit.
+- calculate how much of each vegetation feature occurs inside each planning unit 
+  - this is the **abundance of the features**
+- use  `problem()`  to create an empty conservation planning problem that only contains the planning unit and biodiversity data
+- use `feature_abundances()` to calculate the total amount of each feature in each planning unit
 
 ```{r}
-# create prioritizr problem with only the data
+# create prioritizr problem with only the PU data + vegetation data 
 p0 <- problem(pu_data, veg_data, cost_column = "cost")
 
 # print empty problem,
