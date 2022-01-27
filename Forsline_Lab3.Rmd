@@ -471,11 +471,19 @@ It seems like features that are more abundant typically are less represented by 
 
 ## Introduction
 
-Here we will develop prioritizations to identify priority areas for protected area establishment. Its worth noting that prioritizr is a decision support tool (similar to [Marxan](http://marxan.org/) and [Zonation](https://www.helsinki.fi/en/researchgroups/digital-geography-lab/software-developed-in-cbig#section-52992)). This means that it is designed to help you make decisions---it can't make decisions for you.
+- develop prioritizations to identify priority areas for protected area establishment
+- prioritizr is a decision support tool (similar to [Marxan](http://marxan.org/) and [Zonation](https://www.helsinki.fi/en/researchgroups/digital-geography-lab/software-developed-in-cbig#section-52992))
+  - it is designed to help you make decisions---it can't make decisions for you.
 
 ## Starting out simple
 
-To start things off, let's keep things simple. Let's create a prioritization using the [minimum set formulation of the reserve selection problem](https://prioritizr.net/reference/add_min_set_objective.html). This formulation means that we want a solution that will meet the targets for our biodiversity features for minimum cost. Here, we will set 5% targets for each vegetation class and use the data in the `cost` column to specify acquisition costs. Although we strongly recommend using [Gurobi](https://www.gurobi.com/) to solve problems (with [`add_gurobi_solver`](https://prioritizr.net/reference/add_gurobi_solver.html)), we will use the [lpsymphony solver](https://prioritizr.net/reference/add_lpsymphony_solver.html) in this workshop since it is easier to install. The Gurobi solver is much faster than the lpsymphony solver ([see here for installation instructions](https://prioritizr.net/articles/gurobi_installation.html)).
+- create a prioritization using the [minimum set formulation of the reserve selection problem](https://prioritizr.net/reference/add_min_set_objective.html)
+- we want a solution that will meet the targets for our biodiversity features for minimum cost
+- set 5% targets for each vegetation class
+- use the data in the `cost` column to specify acquisition costs
+
+Although we strongly recommend using [Gurobi](https://www.gurobi.com/) to solve problems (with [`add_gurobi_solver`](https://prioritizr.net/reference/add_gurobi_solver.html)), we will use the [lpsymphony solver](https://prioritizr.net/reference/add_lpsymphony_solver.html) in this workshop since it is easier to install. 
+- the Gurobi solver is much faster than the lpsymphony solver ([see here for installation instructions](https://prioritizr.net/articles/gurobi_installation.html)).
 
 ```{r, out.width = "65%"}
 # print planning unit data
@@ -517,12 +525,26 @@ spplot(s1, "solution_1", col.regions = c("grey80", "darkgreen"), main = "s1",
 
 Now let's examine the solution.
 
-```{block2, type="rmdquestion"}
 1. How many planing units were selected in the prioritization? What proportion of planning units were selected in the prioritization?
+
+```{r}
+n <- 15
+N <- nrow(pu_data)
+
+prop <- n / N
+perc <- round(prop * 100, digits = 2)
+```
+
+
+The prioritization selected `r n` planning units, which is `r perc` of the `r N` total planning units. 
+
 2. Is there a pattern in the spatial distribution of the priority areas?
+
+There is no clear pattern in the spatial distribution of the priority areas. They look scattered and random. 
+
+
 3. Can you verify that all of the targets were met in the prioritization (hint: `eval_feature_representation_summary(p1, s1[, "solution_1"])`)?
 
-```
 
 ## Adding complexity
 
