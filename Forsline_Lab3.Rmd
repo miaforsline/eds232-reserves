@@ -2,9 +2,13 @@
 title: "Lab 3: Reserve Planning"
 author: "Mia Forsline"
 date: "2022-02-02"
-output: html_document
-bibliography: "files/prioritizr.bib"
-css: "files/prioritizr-style.css"
+output: 
+  html_document:
+    theme: flatly
+    code_folding: hide
+    toc: true
+    toc_float: true
+    number_sections: false 
 editor_options: 
   chunk_output_type: inline
 ---
@@ -279,7 +283,7 @@ twelfth_percent <- round(twelfth_proportion * 100, digits = 2)
 
 Approximately `r twelfth_percent`% of the cells contain the 12th vegetation class. 
 
-# 3. Which vegetation class is the most abundant (i.e. present in the greatest number of cells)?
+Which vegetation class is the most abundant (i.e. present in the greatest number of cells)?
 
 
 
