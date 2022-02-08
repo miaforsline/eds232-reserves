@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE,
 
 # Learning Objectives {.unnumbered}
 
--   use prioritizr as an introduction to systemic conservation planning
+-   use `prioritizr` as an introduction to systemic conservation planning
 
 -   Note: this lab was created by Jeffrey O. Hanson, the developer of
     the R package `prioritizr`
@@ -174,7 +174,7 @@ head(pu_data@data)
 head(pu_data$cost)
 
 # print the highest cost value
-max_cost <- max(pu_data$cost)
+max_cost <- round(max(pu_data$cost), digits = 2)
 
 # print the smallest cost value
 min(pu_data$cost)
@@ -197,7 +197,7 @@ There are `r row` planning units.
 
 ## 2. What is the highest cost value?
 
-The highest cost value is `r max_cost`.
+The highest cost value is `r max_cost` in millions of Australian dollars. 
 
 ## 3. Is there a spatial pattern in the planning unit cost values (hint:
 
@@ -207,7 +207,7 @@ Based on the map, it seems like the eastern side of Tasmania has lower
 cost cells ranging from approximately 5 - 15. The middle and northern
 sections of the area of interest have the highest cost values hovering
 around 45. And the western side of Tasmania has middling cost values
-hoving around 30.
+hovering around 30.
 
 # Vegetation data
 
@@ -295,16 +295,13 @@ cellStats(veg_data[[1]], "mean")
 mapview(veg_data[[13]])
 ```
 
-## Questions:
 
-1.  What part of the study area is the 13th vegetation class found in
-    (hint: make a map)? For instance, is it in the south-eastern part of
-    the study area?
+## 4. What part of the study area is the 13th vegetation class found in (hint: make a map)? For instance, is it in the south-eastern part of the study area?
 
 Most of the 13th vegetation class data are found in the eastern part of
 the study area.
 
-2.  What proportion of cells contain the 12th vegetation class?
+## 5. What proportion of cells contain the 12th vegetation class?
 
 ```{r}
 total_cells <- ncell(veg_data)
@@ -317,8 +314,14 @@ twelfth_percent <- round(twelfth_proportion * 100, digits = 2)
 Approximately `r twelfth_percent`% of the cells contain the 12th
 vegetation class.
 
-Which vegetation class is the most abundant (i.e. present in the
-greatest number of cells)?
+## 6. Which vegetation class is the most abundant (i.e. present in the greatest number of cells)?
+
+```{r}
+all_veg <- cellStats(veg_data, "sum", na.rm = TRUE)
+which.max(all_veg)
+```
+
+Vegetation 12 is the most abundant class. 
 
 # Gap analysis
 
@@ -417,7 +420,7 @@ abundance_data$feature[which.max(abundance_data$absolute_abundance_km2)]
 ## 7. What is the median abundance of the features (hint: `median`)?
 
 ```{r}
-median <- median(abundance_data$absolute_abundance_km2)
+median <- round(median(abundance_data$absolute_abundance_km2), digits = 2)
 ```
 
 The median abundance of the features is `r median` km^2^.
@@ -614,7 +617,7 @@ spplot(s1, "solution_1", col.regions = c("grey80", "darkgreen"), main = "s1",
        colorkey = FALSE)
 ```
 
-##14. How many planing units were selected in the prioritization? What proportion of planning units were selected in the prioritization?
+##14. How many planning units were selected in the prioritization? What proportion of planning units were selected in the prioritization?
 
 ```{r}
 n <- 15
@@ -637,6 +640,8 @@ areas. They look scattered and random.
 ```{r}
 eval_feature_representation_summary(p1, s1[, "solution_1"])
 ```
+
+Yes, we can verify that that all of the targets are met because every value in the relative_held column > 0.05. 
 
 ## Adding complexity
 
@@ -769,13 +774,10 @@ assert_that(
 ##17. What is the cost of the planning units selected in `s2`, `s3`, and `s4`?
 
 ```{r}
-# print solution, the solution_1 column contains the solution values - indicating if a planning unit is (1) selected or (0) not
-print(s2)
-
 # calculate total cost of the prioritization
-s2_cost <- eval_cost_summary(p2, s2[, "solution_1"])
-s3_cost <- eval_cost_summary(p3, s3[, "solution_1"])
-s4_cost <- eval_cost_summary(p4, s4[, "solution_1"])
+s2_cost <- round(eval_cost_summary(p2, s2[, "solution_1"]), digits = 2)
+s3_cost <- round(eval_cost_summary(p3, s3[, "solution_1"]), digits = 2)
+s4_cost <- round(eval_cost_summary(p4, s4[, "solution_1"]), digits = 2)
 ```
 
 The costs associated with `s2`, `s3`, and `s4` are `r s2_cost[[2]]`,
@@ -793,14 +795,12 @@ s4_n <- eval_n_summary(p4, s4[, "solution_1"])
 There are `r s2_n[[2]]` planning units in `s2`, `r s3_n[[2]]` planning
 units in `s3`, and `r s4_n[[2]]` planning units in `s4`.
 
-##19. Do the solutions with more planning units have a greater cost? Why (or why not)?
+## 19. Do the solutions with more planning units have a greater cost? Why (or why not)?
 
 Yes, `s4` has the highest cost (`r s4_cost[[2]]`) with its `r s4_n`
-planning units. Because solution 4 has the most constraints, it needs
-the most planning units to meet its 10% threshold. More planning units
-means there is a higher cost associated.
+planning units because it has the most planning units. 
 
-##20. Why does the first solution (`s1`) cost less than the second solution with protected areas locked into the solution (`s2`)?
+## 20. Why does the first solution (`s1`) cost less than the second solution with protected areas locked into the solution (`s2`)?
 
 The first solution costs less than the second solution because in the
 second solution, we added the complexity of locking in existing
@@ -809,6 +809,8 @@ remaining higher-cost area. The existing protected area likely covers
 low-cost planning units.
 
 ##21. Why does the third solution (`s3`) cost less than the fourth solution solution with highly degraded areas locked out (`s4`)?
+
+It most likely costs less to protect highly degraded areas. 
 
 # Penalizing fragmentation
 
