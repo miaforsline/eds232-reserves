@@ -522,7 +522,7 @@ sum <- sum(repr_data$relative_held >= target_value)
 With a target of 10% coverage by protected areas, `r sum` features do
 not meet this target threshold.
 
-\#\#12. If we set a target of 20% coverage by protected areas, how many
+## 12. If we set a target of 20% coverage by protected areas, how many
 features fail to meet this target?
 
 ```{r}
@@ -533,7 +533,7 @@ sum <- sum(repr_data$relative_held >= target_value)
 With a target of 20% coverage by protected areas, `r sum` features do
 not meet this target threshold.
 
-\#\#13. Is there a relationship between the total abundance of a feature
+## 13. Is there a relationship between the total abundance of a feature
 and how well it is represented by protected areas (hint:
 `plot(abundance_data$absolute_abundance ~ repr_data$relative_held)`)?
 
@@ -617,7 +617,7 @@ spplot(s1, "solution_1", col.regions = c("grey80", "darkgreen"), main = "s1",
        colorkey = FALSE)
 ```
 
-##14. How many planning units were selected in the prioritization? What proportion of planning units were selected in the prioritization?
+## 14. How many planning units were selected in the prioritization? What proportion of planning units were selected in the prioritization?
 
 ```{r}
 n <- 15
@@ -630,12 +630,12 @@ perc <- round(prop * 100, digits = 2)
 The prioritization selected `r n` planning units, which is `r perc` of
 the `r N` total planning units.
 
-##15. Is there a pattern in the spatial distribution of the priority areas?
+## 15. Is there a pattern in the spatial distribution of the priority areas?
 
 There is no clear pattern in the spatial distribution of the priority
 areas. They look scattered and random.
 
-##16. Can you verify that all of the targets were met in the prioritization (hint: `eval_feature_representation_summary(p1, s1[, "solution_1"])`)?
+## 16. Can you verify that all of the targets were met in the prioritization (hint: `eval_feature_representation_summary(p1, s1[, "solution_1"])`)?
 
 ```{r}
 eval_feature_representation_summary(p1, s1[, "solution_1"])
@@ -771,19 +771,19 @@ assert_that(
     eval_cost_summary(p4, s4[, "solution_1"])$cost)
 ```
 
-##17. What is the cost of the planning units selected in `s2`, `s3`, and `s4`?
+## 17. What is the cost of the planning units selected in `s2`, `s3`, and `s4`?
 
 ```{r}
 # calculate total cost of the prioritization
-s2_cost <- round(eval_cost_summary(p2, s2[, "solution_1"]), digits = 2)
-s3_cost <- round(eval_cost_summary(p3, s3[, "solution_1"]), digits = 2)
-s4_cost <- round(eval_cost_summary(p4, s4[, "solution_1"]), digits = 2)
+s2_cost <- eval_cost_summary(p2, s2[, "solution_1"])
+s3_cost <- eval_cost_summary(p3, s3[, "solution_1"])
+s4_cost <- eval_cost_summary(p4, s4[, "solution_1"])
 ```
 
-The costs associated with `s2`, `s3`, and `s4` are `r s2_cost[[2]]`,
-`r s3_cost[[2]]`, and `r s4_cost[[2]]` respectively.
+The costs associated with `s2`, `s3`, and `s4` are `r round(s2_cost[[2]], digits = 2)`,
+`r round(s3_cost[[2]], digits = 2)`, and `r round(s4_cost[[2]], digits = 2)` respectively.
 
-##18. How many planning units are in `s2`, `s3`, and `s4`?
+## 18. How many planning units are in `s2`, `s3`, and `s4`?
 
 ```{r}
 # calculate number of planning units selected in the prioritization
@@ -808,7 +808,7 @@ protected areas. Thus, `s2` has to select planning units from the
 remaining higher-cost area. The existing protected area likely covers
 low-cost planning units.
 
-##21. Why does the third solution (`s3`) cost less than the fourth solution solution with highly degraded areas locked out (`s4`)?
+## 21. Why does the third solution (`s3`) cost less than the fourth solution solution with highly degraded areas locked out (`s4`)?
 
 It most likely costs less to protect highly degraded areas. 
 
@@ -893,7 +893,7 @@ assert_that(
 Now let's compare the solutions to the problems with (`s5`) and without
 (`s4`) the boundary length penalties.
 
-##22. What is the cost the fourth (`s4`) and fifth (`s5`) solutions? Why does the fifth solution (`s5`) cost more than the fourth (`s4`) solution?
+## 22. What is the cost the fourth (`s4`) and fifth (`s5`) solutions? Why does the fifth solution (`s5`) cost more than the fourth (`s4`) solution?
 
 ```{r}
 # calculate total cost of the prioritization
@@ -907,7 +907,7 @@ penalty we placed on it. The boundary penalty forced the solution to
 clump planning units together even if those planning units were
 relatively high cost.
 
-##23. Try setting the penalty value to 0.000000001 (i.e. `1e-9`) instead of 0.001. What is the cost of the solution now? Is it different from the fourth solution (`s4`) (hint: try plotting the solutions to visualize them)? Is this is a useful penalty value? Why (or why not)?
+## 23. Try setting the penalty value to 0.000000001 (i.e. `1e-9`) instead of 0.001. What is the cost of the solution now? Is it different from the fourth solution (`s4`) (hint: try plotting the solutions to visualize them)? Is this is a useful penalty value? Why (or why not)?
 
 ```{r}
 # make prioritization problem
@@ -949,7 +949,7 @@ also look identical, with lots of fragments in the eastern side of
 Tasmania. Since the two solutions look very similar, this was not a
 helpful penalty value.
 
-##24. Try setting the penalty value to 0.5. What is the cost of the solution now? Is it different from the fourth solution (`s4`) (hint: try plotting the solutions to visualize them)? Is this a useful penalty value? Why (or why not)?
+## 24. Try setting the penalty value to 0.5. What is the cost of the solution now? Is it different from the fourth solution (`s4`) (hint: try plotting the solutions to visualize them)? Is this a useful penalty value? Why (or why not)?
 
 ```{r}
 p7_rds <- file.path(dir_data, "p7.rds")
